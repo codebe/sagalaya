@@ -16,6 +16,7 @@ class Controller extends Generator {
 		$class = new ClassGenerator(Inflector::pluralize("{$model->config->name}") . 'Controller');
 		$class->setExtendedClass('\lithium\action\Controller');
 		$class->setNamespaceName($this->namespace);
+		$class->addUse($this->app . '\\models\\' . $model->config->name);
 
 		$directory = LITHIUM_APP_PATH . '/views/' . strtolower(Inflector::pluralize("{$model->config->name}"));
 		$view_directory = LITHIUM_APP_PATH . '/views/' . strtolower(Inflector::pluralize("{$model->config->name}"));

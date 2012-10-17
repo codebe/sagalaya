@@ -54,7 +54,7 @@ abstract class Generator {
 
 	/**
 	 * Every child class must implement this function
-	 * @param unknown_type $xml
+	 * @param resource $xml
 	 */
 	public function build($xml) {
 	}
