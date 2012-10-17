@@ -4,6 +4,8 @@ SAGALAYA PHP-FRAMEWORK
 Framework build based on lithium (https://github.com/UnionOfRAD/lithium), integrating Twig as View layer and Doctrine as Model layer. 
 Using Doctrine and Twig building web application become more intuitive.
 
+You can see the running framework at http://sagalaya.my.phpcloud.com
+
 Installation instruction 
 -----------------------------
 
