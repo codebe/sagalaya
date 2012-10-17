@@ -189,10 +189,15 @@
 							besides the existing <code>findOne</code>, <code>findOneBy</code> methods ({{ this.html.link('see here', 'http://www.doctrine-project.org/docs/orm/2.1/en/reference/working-with-objects.html#querying') }}).</p>
 							
 							<p>But for <code>findAll()</code> method, we create more features than findAll Doctrine has created. The input for method is array that provide this params : 
-							<code>-where and, -where or, '-leftJoin', '-innerJoin', '-orderBy', '-groupBy', '-limit', '-offset'</code>. Below is the code examples.</p>
+							<code>-select, -where and, -where or, '-leftJoin', '-innerJoin', '-orderBy', '-groupBy', '-limit', '-offset'</code>. Below is the code examples.</p>
 							
 							<pre class="brush: php">
 								$users = User::findAll(array(
+									'select' => array(
+										array('field' => 'type'),
+										array('field' => array('salary', 'others'), 'aggregate' => 'SUM', 'operator' => '*', 'as' => 'income'),
+										array('field' => 'id', 'aggregate' => 'COUNT', 'as' => 'number')
+									),
 									'where' => array(
 										'and' => array(
 											array('fullname' => array('eq' => 'someone')),

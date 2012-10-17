@@ -322,8 +322,8 @@ abstract class Model {
 	 * $users = User::findAll([
 	 * 	'select' => [
 	 * 		['field' => 'type'],
-	 * 		['field' => ['salary', 'others], 'aggregate' => 'SUM', 'operator' => '*', 'as' => 'income]
-	 * 		['field' => 'id', 'aggregate' => 'COUNT', 'as' => 'number]
+	 * 		['field' => ['salary', 'others], 'aggregate' => 'SUM', 'operator' => '*', 'as' => 'income']
+	 * 		['field' => 'id', 'aggregate' => 'COUNT', 'as' => 'number']
 	 * 	],
 	 * 	'where' => [
 	 * 		'and' => [['fullname' => ['is' => 'NOT NULL']],
