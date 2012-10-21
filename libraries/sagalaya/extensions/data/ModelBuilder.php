@@ -9,15 +9,17 @@ use Doctrine\Common\Collections\ArrayCollection;
  * @author Mukhamad Ikhsan
  *
  */
-class ModelBuilder {
+class ModelBuilder
+{
 
     public static $properties, $class, $namespace;
 
     /**
      *
-     * @param sagalaya\extensions\data\Model $object
+     * @param \sagalaya\extensions\data\Model $object
      */
-    public static function init($object) {
+    public static function init($object)
+    {
         static::$class = new \ReflectionClass($object);
         static::$properties = static::$class->getProperties(\ReflectionProperty::IS_PROTECTED);
         static::$namespace = static::$class->getNamespaceName();
@@ -25,10 +27,11 @@ class ModelBuilder {
 
     /**
      * Create Model object from array
-     * @param sagalaya\extensions\data\Model $object
+     * @param \sagalaya\extensions\data\Model $object
      * @param array $data
      */
-    public static function create($object, $data = array()) {
+    public static function create($object, $data = array())
+    {
 
         static::init($object);
 
@@ -58,10 +61,11 @@ class ModelBuilder {
 
     /**
      * Update attributes on Model
-     * @param sagalaya\extensions\data\Model $object
+     * @param \sagalaya\extensions\data\Model $object
      * @param array $data
      */
-    public static function update($object, $data = array()) {
+    public static function update($object, $data = array())
+    {
 
         static::init($object);
         foreach ($data as $field => $value) {
@@ -85,17 +89,18 @@ class ModelBuilder {
 
     /**
      * Set element to model attribute
-     * @param sagalaya\extensions\data\Model $object
+     * @param \sagalaya\extensions\data\Model $object
      * @param string $field
      * @param mixed $value
      */
-    public static function set($object, $field, $value) {
+    public static function set($object, $field, $value)
+    {
 
         $comment = ModelAnnotation::get($object, $field);
         $targetEntity = static::$namespace . '\\' . ModelAnnotation::get($object, $field, 'targetEntity');
 
         if (is_array($value)) {
-            $instance = $targetEntity::findOneBy($item);
+            $instance = $targetEntity::findOneBy($value);
             if (!$instance) {
                 $instance = new $targetEntity($value);
             }
@@ -119,11 +124,12 @@ class ModelBuilder {
 
     /**
      * Add element to model attribute
-     * @param sagalaya\extensions\data\Model $object
+     * @param \sagalaya\extensions\data\Model $object
      * @param string $field
      * @param mixed $value
      */
-    public static function add($object, $field, $value) {
+    public static function add($object, $field, $value)
+    {
 
         $targetEntity = static::$namespace . '\\' . ModelAnnotation::get($object, $field, 'targetEntity');
 

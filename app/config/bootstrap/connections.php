@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Lithium: the most rad php framework
  *
@@ -69,14 +70,34 @@ use lithium\data\Connections;
 // 	'encoding' => 'UTF-8'
 // ));
 
- Connections::add('default', array(  	
+Connections::add('default', array(
+    'development' => array(
         'type' => 'Doctrine',
         'driver' => 'pdo_mysql',
         'host' => 'localhost',
         'login' => 'root',
-        'password' => '123456',
-        'database' => 'sagalaya',
+        'password' => '',
+        'database' => 'sagalaya_production',
         'encoding' => 'UTF-8'
- ));
+    ),
+    'test' => array(
+        'type' => 'Doctrine',
+        'driver' => 'pdo_mysql',
+        'host' => 'localhost',
+        'login' => 'root',
+        'password' => '',
+        'database' => 'sagalaya_test',
+        'encoding' => 'UTF-8'
+    )
+));
 
+Connections::add('test', array(
+    'type' => 'Doctrine',
+    'driver' => 'pdo_mysql',
+    'host' => 'localhost',
+    'login' => 'root',
+    'password' => '',
+    'database' => 'sagalaya_test',
+    'encoding' => 'UTF-8'
+));
 ?>
