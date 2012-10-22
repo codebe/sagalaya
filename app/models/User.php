@@ -3,7 +3,7 @@
 namespace app\models;
 
 /**
- * @Entity(repositoryClass="core\resources\repository\UserRepository")
+ * @Entity(repositoryClass="app\resources\repository\UserRepository")
  * @HasLifecycleCallbacks
  * @Table(name="users")
  */
@@ -14,6 +14,16 @@ class User extends \sagalaya\extensions\data\Model
 	 * @Id @Column(type="string", length=36) @GeneratedValue(strategy="UUID")
 	 */
 	protected $id = null;
+
+    /**
+     * @Column(type="string", unique=true)
+     */
+    protected $email;
+
+    /**
+     * @Column(type="string")
+     */
+    protected $password;
 	
 	/**
 	 * (non-PHPdoc)
