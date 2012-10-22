@@ -22,7 +22,7 @@ abstract class Generator {
 	public function __construct($xml) {
 
 		$className = substr(get_class($this), strrpos(get_class($this),'\\') + 1);
-		$this->app = substr(LITHIUM_APP_PATH, strripos(LITHIUM_APP_PATH, '/') + 1);
+		$this->app = substr(LITHIUM_APP_PATH, strripos(LITHIUM_APP_PATH, DIRECTORY_SEPARATOR) + 1);
 
 		switch ($className) {
 			case 'Model' :
