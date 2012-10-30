@@ -421,6 +421,9 @@
 							<!-- Default Routing -->
 							<h3 id="default-routing">Default Routing</h3>
 							<p>Routing rules is placed at <code>app/config/routes.php</code></p>
+
+                            <p>There's no many changes for routing, you can see documentation at
+                                <a href="http://lithify.me/docs/lithium/net/http/Router">Lithium documentation</a> </p>
 							
 							<!-- Action Configuration -->
 							<h3 id="action-configuration">Action Configuration</h3>
@@ -449,7 +452,6 @@
 							below is example on form view (e.g : create.html.twig)</span>
 							<pre class="brush: php">
 								{% raw %}
-								
 										{% macro errors(input) %}
 												{% for error in input %}
 												<div class="warning">{{error}}</div>
@@ -469,6 +471,33 @@
 							
 							<!-- Element and Layout -->
 							<h3 id="layout">Element and Layout</h3>
+                            <span>Layout is a template file (twig) that reside on <code>views/layouts</code> folder.
+                            As default <code>default.html.twig</code> file is used to render page.</span>
+
+                            <span>Layout file is like a theme on application, the content of each page will be rendered
+                            on layout file. The page content called on layout using <code>{% raw %} {{ this.content() }} {% endraw %}</code></span>
+
+                            <span>You can defined many layout files. When you need to load specific layout for some action you can
+                            choose which layout you want to use.</span>
+
+                            <pre class="brush: php">
+                                public function someAction() {
+                                    // set blank.html.twig on layouts folder as layout for this action
+                                    $this->_render['layout'] = 'blank';
+                                }
+                            </pre>
+
+                            <span>On application we found <code>views/elements</code> folder.
+                            In elements folder we can create twig file that will be use on others template file.</span>
+
+                            <pre class="brush: php">
+                                {% raw %}
+                                    {% include "leftbar.html.twig" %}
+                                {% endraw %}
+                            </pre>
+
+                            <span>The important think is, the file you try to include has path that relative to
+                            <code>views/elements</code> folder.</span>
 							
 							<!-- View Helper -->
 							<h3 id="view-helper">View Helper</h3>													
