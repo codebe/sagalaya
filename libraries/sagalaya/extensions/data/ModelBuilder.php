@@ -134,25 +134,26 @@ class ModelBuilder
         $targetEntity = static::$namespace . '\\' . ModelAnnotation::get($object, $field, 'targetEntity');
 
         foreach ($value as $index => $item) {
+            if (!empty($item)) {
+                if (is_array($item)) {
+                    $instance = $targetEntity::findOneBy($item);
+                } else if (is_int($item) || is_string($item)) {
+                    $instance = $targetEntity::get($item);
+                } else if (is_object($item)) {
+                    $instance = $item;
+                }
 
-            if (is_array($item)) {
-                $instance = $targetEntity::findOneBy($item);
-            } else if (is_int($item) || is_string($item)) {
-                $instance = $targetEntity::get($item);
-            } else if (is_object($item)) {
-                $instance = $item;
-            }
+                if (!is_object($instance)) {
+                    $instance = new $targetEntity($item);
+                }
 
-            if (!is_object($instance)) {
-                $instance = new $targetEntity($item);
-            }
-
-            if (isset($instance)) {
-                $addFunction = 'add' . ucfirst($field);
-                if (method_exists($object, $addFunction)) {
-                    $object->$addFunction($instance);
-                } else {
-                    $object->$field->add($instance);
+                if (isset($instance)) {
+                    $addFunction = 'add' . ucfirst($field);
+                    if (method_exists($object, $addFunction)) {
+                        $object->$addFunction($instance);
+                    } else {
+                        $object->$field->add($instance);
+                    }
                 }
             }
         }
