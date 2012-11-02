@@ -35,14 +35,17 @@ Session::config(array(
  * @see lithium\action\Request::$data
  * @see lithium\security\Auth
  */
-use lithium\security\Auth;
+use sagalaya\extensions\security\Auth;
 
 Auth::config(array(
 	'default' => array(
+        'auth' => '\sagalaya\extensions\security\Doctrine',
 		'adapter' => '\sagalaya\extensions\adapter\Doctrine',
 		'model' => 'User',
 		'fields' => array('email', 'password'),
-		'query' => 'findOneBy'
+        'filters' => array('password' => array('\lithium\util\String', 'hash')),
+		'query' => 'findOneBy',
+        'validators' => array('password' => false)
 	)
 ));
 

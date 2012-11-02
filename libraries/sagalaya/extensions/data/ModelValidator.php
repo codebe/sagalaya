@@ -135,7 +135,6 @@ class ModelValidator {
 				}
 			} catch (\ReflectionException $e) {
 				die($e->getTrace() . "-" . $e->getMessage());
-				continue;
 			}
 		}
 

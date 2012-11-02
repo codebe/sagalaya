@@ -81,7 +81,20 @@ abstract class Model {
 	 * @param mixed $args
 	 */
 	public static function __callStatic($method, $args) {
-		return self::getRepository()->$method($args[0]);
+        switch(count($args)) {
+            case 1 :
+                return self::getRepository()->$method($args[0]);
+            case 2 :
+                return self::getRepository()->$method($args[0], $args[1]);
+            case 3 :
+                return self::getRepository()->$method($args[0], $args[1], $args[2]);
+            case 4 :
+                return self::getRepository()->$method($args[0], $args[1], $args[2], $args[3]);
+            case 5 :
+                return self::getRepository()->$method($args[0], $args[1], $args[2], $args[3], $args[4]);
+            default :
+                return self::getRepository()->$method();
+        }
 	}
 
 	/**

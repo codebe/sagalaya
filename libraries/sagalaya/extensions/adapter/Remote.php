@@ -2,6 +2,10 @@
 
 namespace sagalaya\extensions\adapter;
 
+/**
+ * Authenticate using remote function
+ * @author Mukhamad Ikhsan
+ */
 class Remote extends \lithium\core\Object {
 
 	protected $credentials;

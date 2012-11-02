@@ -1,7 +1,7 @@
 <?php
 
 use lithium\action\Dispatcher;
-use lithium\security\Auth;
+use sagalaya\extensions\security\Auth;
 use lithium\storage\Session;
 use lithium\action\Response;
 
