@@ -100,8 +100,18 @@ class ModelBuilder
         $targetEntity = static::$namespace . '\\' . ModelAnnotation::get($object, $field, 'targetEntity');
 
         if (is_array($value)) {
-            $instance = $targetEntity::findOneBy($value);
-            if (!$instance) {
+            if (get_parent_class($object->$field)) {
+                $instance = $object->$field;
+                foreach($value as $key => $child) {
+                    if (is_array($child)) {
+                        static::set($instance,$key, $child);
+                    } else {
+                        if (property_exists($instance, $key)) {
+                            $instance->$key = $child;
+                        }
+                    }
+                }
+            } else {
                 $instance = new $targetEntity($value);
             }
         } else if (is_int($value) || is_string($value)) {
@@ -111,7 +121,9 @@ class ModelBuilder
         }
 
         if (isset($instance)) {
-            $object->$field = $instance;
+            if (!isset($object->$field)) {
+                $object->$field = $instance;
+            }
             if (preg_match('|inversedBy|', $comment)) {
                 $inversedBy = ModelAnnotation::get($object, $field, 'inversedBy');
                 $instance->$inversedBy = $object;
