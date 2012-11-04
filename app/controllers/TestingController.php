@@ -2,14 +2,14 @@
 
 namespace app\controllers;
 
-use app\models\User;
+use app\models\Testing;
 
-class UsersController extends \lithium\action\Controller {
+class TestingController extends \lithium\action\Controller {
 	
 	public $publicActions = array('index');
 	
 	public function index() {
-        $user = new User();
+        $user = new Testing();
         $user::test();
         $user::testOne('one');
         $user::testTwo('one', 'two');
@@ -25,7 +25,7 @@ class UsersController extends \lithium\action\Controller {
             'address1' => 'bandung',
             'address2' => 'jakarta'
         );
-        $user = new User($data);
+        $user = new Testing($data);
         $user->password = 'password';
 
         $user->addCondition(array(
@@ -37,7 +37,7 @@ class UsersController extends \lithium\action\Controller {
         ));
 
         if ($user->save()) {
-            $this->redirect('Users::index');
+            $this->redirect('Testing::index');
         } else {
             $errors = $user->getErrors();
         }

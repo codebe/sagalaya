@@ -3,11 +3,11 @@
 namespace app\models;
 
 /**
- * @Entity(repositoryClass="app\resources\repository\UserRepository")
+ * @Entity(repositoryClass="app\resources\repository\TestingRepository")
  * @HasLifecycleCallbacks
  * @Table(name="users")
  */
-class User extends \sagalaya\extensions\data\Model
+class Testing extends \sagalaya\extensions\data\Model
 	implements \Zend\Acl\Resource\ResourceInterface, \Zend\Acl\Role\RoleInterface {
 	
 	/**

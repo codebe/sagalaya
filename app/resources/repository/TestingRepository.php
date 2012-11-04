@@ -1,7 +1,7 @@
 <?php
 namespace app\resources\repository;
 
-class UserRepository extends \Doctrine\ORM\EntityRepository
+class TestingRepository extends \Doctrine\ORM\EntityRepository
 {
     public function test() {
         echo "start test..<br/>";
