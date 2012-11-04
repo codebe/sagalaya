@@ -40,7 +40,11 @@ class ModelValidator {
 
         if (!empty($object->_conditions)) {
             foreach($object->_conditions as $field => $condition) {
-                $validations[$field] = $condition;
+                if (isset($validations[$field])) {
+                    $validations[$field] = array_merge($condition, $validations[$field]);
+                } else {
+                    $validations[$field] = $condition;
+                }
             }
         }
 
