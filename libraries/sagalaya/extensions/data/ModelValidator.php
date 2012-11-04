@@ -38,6 +38,12 @@ class ModelValidator {
 		$classname = $reflection->getName();
 		$validations = $object->validations;
 
+        if (!empty($object->_conditions)) {
+            foreach($object->_conditions as $field => $condition) {
+                $validations[$field] = $condition;
+            }
+        }
+
 		if (!empty($validations)) {
 
 			$unique = $equalWith = $custom = array();
@@ -69,7 +75,8 @@ class ModelValidator {
 				}
 			}
 
-			$errors = Validator::check(static::convertToArray($object), $validations);
+            $object_array = static::convertToArray($object, $object->_variables);
+			$errors = Validator::check($object_array, $validations);
 
 			/** Unique checking */
 			foreach ($unique as $key => $value) {
@@ -91,14 +98,13 @@ class ModelValidator {
 			/** EqualWith checking */
 			foreach ($equalWith as $key => $value) {
 
-				// get exception for existing object password
-				if ($object->id && $value['with'] == 'password') {
-					break;
-				}
+                $field = $object_array[reset($value)];
+                $against_field = $object_array[$value['with']];
 
-				if (strcmp($object->$value[0], $object->$value['with']) != 0) {
-					$errors[$value[0]][] = $value["message"];
-				}
+                if (strcmp($field, $against_field) != 0) {
+                    $errors[reset($value)][] = $value['message'];
+                }
+
 			}
 
 			/** Custom validations */
@@ -114,24 +120,26 @@ class ModelValidator {
 			try {
 				foreach ($properties as $property) {
 					$property->setAccessible(true);
-					if (ModelAnnotation::match($property, array('ManyToMany', 'OneToMany'))) {
-						$relation = $property->getValue($object);
-						foreach ($relation as $item) {
-							if (!in_array(spl_object_hash($item), $object_hash)) {
-								if (!ModelValidator::isValid($item, $object_hash)) {
-									$errors[$property->getName()] = $item->getErrors();
-								}
-							}
-						}
-					} elseif(ModelAnnotation::match($property, array('ManyToOne', 'OneToOne'))) {
-						if ($item = $property->getValue($object)) {
-							if (!in_array(spl_object_hash($item), $object_hash)) {
-								if (!ModelValidator::isValid($item, $object_hash)) {
-									$errors[$property->getName()] = $item->getErrors();
-								}
-							}
-						}
-					}
+                    if (array_key_exists($property->getName(), $validations)) {
+                        if (ModelAnnotation::match($property, array('ManyToMany', 'OneToMany'))) {
+                            $relation = $property->getValue($object);
+                            foreach ($relation as $item) {
+                                if (!in_array(spl_object_hash($item), $object_hash)) {
+                                    if (!ModelValidator::isValid($item, $object_hash)) {
+                                        $errors[$property->getName()] = $item->getErrors();
+                                    }
+                                }
+                            }
+                        } elseif(ModelAnnotation::match($property, array('ManyToOne', 'OneToOne'))) {
+                            if ($item = $property->getValue($object)) {
+                                if (!in_array(spl_object_hash($item), $object_hash)) {
+                                    if (!ModelValidator::isValid($item, $object_hash)) {
+                                        $errors[$property->getName()] = $item->getErrors();
+                                    }
+                                }
+                            }
+                        }
+                    }
 				}
 			} catch (\ReflectionException $e) {
 				die($e->getTrace() . "-" . $e->getMessage());
@@ -151,29 +159,37 @@ class ModelValidator {
 	}
 
 	/**
-	 *
+	 *  Convert doctrine object to array
 	 * @param Model $object
 	 */
-	public static function convertToArray($object) {
-		$result = array();
-		$reflector = new \ReflectionClass($object);
+	public static function convertToArray($object, $addition = array()) {
+
+        $result = $addition;
+
+        $reflector = new \ReflectionClass($object);
 		$properties = $reflector->getProperties(\ReflectionProperty::IS_PROTECTED);
-		foreach ($properties as $property) {
-			$property->setAccessible(true);
+
+        foreach ($properties as $property) {
+
+            $property->setAccessible(true);
 			$value = $property->getValue($object);
 			$field = $property->getName();
-			if ($value == null) {
+
+            if ($value == null) {
 				$result[$field] = null;
 			} else {
-				if (ModelAnnotation::match($property, array('ManyToMany', 'OneToMany'))) {
+
+                if (ModelAnnotation::match($property, array('ManyToMany', 'OneToMany'))) {
 					$result[$field] = $value->count();
 				} elseif (ModelAnnotation::match($property, array('ManyToOne', 'OneToOne'))) {
 					$result[$field] = $value->id;
 				} else {
 					$result[$field] = $value;
 				}
+
 			}
 		}
+
 		return $result;
 	}
 

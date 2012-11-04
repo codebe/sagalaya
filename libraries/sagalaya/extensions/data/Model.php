@@ -11,6 +11,18 @@ use lithium\data\Connections;
  */
 abstract class Model {
 
+    /**
+     * variable to hold condition which is not associated with persistence
+     * @var $_filters
+     */
+    public $_conditions = array();
+
+    /**
+     * non persistence variable, used for validation
+     * @var array
+     */
+    public $_variables = array();
+
 	/**
 	 * Query result in object graph
 	 */
@@ -41,6 +53,11 @@ abstract class Model {
 	 * @param array $args
 	 */
 	public function __construct($args = array()) {
+        foreach($args as $key => $value) {
+            if (!property_exists(get_class($this), $key)) {
+                $this->_variables[$key] = $value;
+            }
+        }
 		ModelBuilder::create($this, $args);
 	}
 
@@ -389,6 +406,13 @@ abstract class Model {
 		die($debug);
 	}
 
+    /**
+     * @param Filter $filter
+     */
+    public function addCondition($condition) {
+        $this->_conditions = $this->_conditions + $condition;
+    }
+
 	/**
 	 * Recursively process join query
 	 * @param QueryBuilder $qb
@@ -517,7 +541,7 @@ abstract class Model {
 							array('id' => array('eq' => $this->id))
 					)
 			),
-		'leftJoin' => $joins), Model::Model_Array));
+		    'leftJoin' => $joins), Model::Model_Array));
 	}
 }
 

@@ -24,6 +24,12 @@ class User extends \sagalaya\extensions\data\Model
      * @Column(type="string")
      */
     protected $password;
+
+    protected $validations = array(
+        'email' => array(
+            array('notEmpty', 'message' => 'Email can\'t be empty')
+        )
+    );
 	
 	/**
 	 * (non-PHPdoc)
