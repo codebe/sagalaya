@@ -15,7 +15,7 @@ use sagalaya\extensions\command\generator\Model;
  */
 class Generator extends \lithium\console\Command {
 
-	protected $generateAll = false;
+	protected $generateMode = null;
 	protected $designPath = '/config/design';
 
 	/**
@@ -69,25 +69,29 @@ class Generator extends \lithium\console\Command {
 	 */
 	public function write($classes) {
 
+        if (empty($this->generateMode)) {
+            $result = $this->in("What's replace mode do you want use, All(A), No Replace (N), Model Only (M) ? ",
+                array('choices' => array('A' => 'A', 'N' => 'N', 'M' => 'M')));
+            $this->generateMode = $result;
+        }
+
 		foreach ($classes as $class) {
-
 			$type = substr(get_class($class), strripos(get_class($class), '\\') + 1);
-
-			if (file_exists($class->path) && !$this->generateAll &&
-					!in_array($type, array('ModelTest', 'Controller', 'ControllerTest', 'Repository'))) {
-
-				$result = $this->in("File {$class->path} is already exists, overwrite the file?",
-				array('choices' => array('Y' => 'Yes', 'N' => 'No', 'A' => 'All')));
-
-				if (strcasecmp($result, "Yes") == 0 || strcasecmp($result, "All") == 0) {
-					$this->put_file($class->path,  $class->generate());
-					$this->generateAll = (strcasecmp($result, "all") == 0) ? true : false;
-				}
-
-			} else {
-				$this->put_file($class->path,  $class->generate());
-			}
-
+            switch ($this->generateMode) {
+                case 'A' :
+                    $this->put_file($class->path,  $class->generate());
+                    break;
+                case 'M' :
+                    if (strcasecmp($type, 'model') == 0) {
+                        $this->put_file($class->path,  $class->generate());
+                    }
+                    break;
+                default :
+                    if (!file_exists($class->path)) {
+                        $this->put_file($class->path,  $class->generate());
+                    }
+                    break;
+            }
 		}
 
 	}
