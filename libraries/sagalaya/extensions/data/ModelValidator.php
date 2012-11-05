@@ -124,22 +124,20 @@ class ModelValidator {
 			try {
 				foreach ($properties as $property) {
 					$property->setAccessible(true);
-                    if (array_key_exists($property->getName(), $validations)) {
-                        if (ModelAnnotation::match($property, array('ManyToMany', 'OneToMany'))) {
-                            $relation = $property->getValue($object);
-                            foreach ($relation as $item) {
-                                if (!in_array(spl_object_hash($item), $object_hash)) {
-                                    if (!ModelValidator::isValid($item, $object_hash)) {
-                                        $errors[$property->getName()] = $item->getErrors();
-                                    }
+                    if (ModelAnnotation::match($property, array('ManyToMany', 'OneToMany'))) {
+                        $relation = $property->getValue($object);
+                        foreach ($relation as $item) {
+                            if (!in_array(spl_object_hash($item), $object_hash)) {
+                                if (!ModelValidator::isValid($item, $object_hash)) {
+                                    $errors[$property->getName()] = $item->getErrors();
                                 }
                             }
-                        } elseif(ModelAnnotation::match($property, array('ManyToOne', 'OneToOne'))) {
-                            if ($item = $property->getValue($object)) {
-                                if (!in_array(spl_object_hash($item), $object_hash)) {
-                                    if (!ModelValidator::isValid($item, $object_hash)) {
-                                        $errors[$property->getName()] = $item->getErrors();
-                                    }
+                        }
+                    } elseif(ModelAnnotation::match($property, array('ManyToOne', 'OneToOne'))) {
+                        if ($item = $property->getValue($object)) {
+                            if (!in_array(spl_object_hash($item), $object_hash)) {
+                                if (!ModelValidator::isValid($item, $object_hash)) {
+                                    $errors[$property->getName()] = $item->getErrors();
                                 }
                             }
                         }
