@@ -321,7 +321,11 @@ abstract class Model {
 		if (isset($options['orderBy'])) {
 			$orders = array();
 			foreach ($options['orderBy']['fields'] as $field) {
-				$orders[] = "$className.$field";
+                if (strpos($field,'.') === false) {
+                    $orders[] = "$className.$field";
+                } else {
+                    $orders[] = $field;
+                }
 			}
 			$qb->addOrderBy(implode(",", $orders),
 					(isset($options['orderBy']['direction']) ? $options['orderBy']['direction'] : null));
