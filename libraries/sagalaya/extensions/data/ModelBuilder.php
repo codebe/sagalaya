@@ -107,7 +107,11 @@ class ModelBuilder
                         static::set($instance,$key, $child);
                     } else {
                         if (property_exists($instance, $key)) {
-                            $instance->$key = $child;
+                            if (is_object($instance->$key)) {
+                                static::set($instance, $key, $child);
+                            } else {
+                                $instance->$key = $child;
+                            }
                         }
                     }
                 }
