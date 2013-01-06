@@ -1,0 +1,15 @@
+<h1>List of PLURAL</h1>
+<table class="table">
+    <thead>
+        <tr>
+            <th>No</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for SINGLE in PLURAL %}
+            <tr>
+                <td>{{ loop.index }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>

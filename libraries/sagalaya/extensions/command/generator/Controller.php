@@ -16,10 +16,12 @@ class Controller extends Generator {
 		$class = new ClassGenerator(Inflector::pluralize("{$model->config->name}") . 'Controller');
 		$class->setExtendedClass('\lithium\action\Controller');
 		$class->setNamespaceName($this->namespace);
-		$class->addUse($this->app . '\\models\\' . $model->config->name);
+		$class->addUse($this->app . '\\models as Model' . $model->config->name);
 
-		$directory = LITHIUM_APP_PATH . '/views/' . strtolower(Inflector::pluralize("{$model->config->name}"));
-		$view_directory = LITHIUM_APP_PATH . '/views/' . strtolower(Inflector::pluralize("{$model->config->name}"));
+		$directory = LITHIUM_APP_PATH . '/views/' . strtolower(
+            Inflector::underscore(Inflector::pluralize("{$model->config->name}")));
+		$view_directory = LITHIUM_APP_PATH . '/views/' . strtolower(
+            Inflector::underscore(Inflector::pluralize("{$model->config->name}")));
 		if (!file_exists($directory)) {
 			mkdir($directory);
 		}
@@ -37,22 +39,24 @@ class Controller extends Generator {
 		foreach (array('index', 'create', 'edit', 'view', 'delete') as $action) {
 			$method = new MethodGenerator($action);
 
-			$single = strtolower("{$model->config->name}");
+			$single = Inflector::camelize("{$model->config->name}");
 			$plurals = Inflector::pluralize($single);
 
-			if (!file_exists($view_directory . '/' . $action . '.html.twig')) {
-				file_put_contents($view_directory . '/' . $action . '.html.twig', '');
+			if (!file_exists($view_directory . '/' . $action . '.html.twig') &&
+                    $action !== "delete") {
+                $content = $this->createView($action, "{$model->config->name}");
+				file_put_contents($view_directory . '/' . $action . '.html.twig', $content);
 			}
 
 			switch ($action) {
 				case 'index' :
-					$body = "\${$plurals} = {$model->config->name}::findAll();\n\n";
+					$body = "\${$plurals} = Model\{$model->config->name}::findAll();\n\n";
 					$body .= "return compact('{$plurals}');";
 					$method->setBody($body);
 					break;
 				case 'create' :
 					$body = "if (\$this->request->data) {\n\n";
-					$body .= "\t\${$single} = new {$model->config->name}(\$this->request->data);\n\n";
+					$body .= "\t\${$single} = new Model\{$model->config->name}(\$this->request->data);\n\n";
 					$body .= "\tif(\${$single}->save()) {\n";
 					$body .= "\t\t\$this->_message('Successfully to create {$model->config->name}');\n";
 					$body .= "\t\t\$this->redirect('{$model->config->name}s::index');\n";
@@ -66,7 +70,8 @@ class Controller extends Generator {
 					break;
 				case 'edit' :
 					$body = "if (\$this->request->id) {\n\n";
-					$body .= "\t\${$single} = {$model->config->name}::get(\$this->request->id);\n";
+					$body .= "\t\${$single} = Model\{$model->config->name}::get(\$this->request->id);\n";
+                    $body .= "\tif(\$this->request->data) {\n";
 					$body .= "\t\${$single}->properties = \$this->request->data;\n\n";
 					$body .= "\tif(\${$single}->save()) {\n";
 					$body .= "\t\t\$this->_message('Successfully to update {$model->config->name}');\n";
@@ -74,21 +79,25 @@ class Controller extends Generator {
 					$body .= "\t} else {\n";
 					$body .= "\t\t\$this->_message('Failed to update {$model->config->name}, please check the error');\n";
 					$body .= "\t\t\$errors = \${$single}->getErrors();\n";
+                    $body .= "\t}\n";
 					$body .= "\t}\n\n";
-					$body .= "}\n\n";
+					$body .= "} else {\n";
+                    $body .= "\t\$this->_message('Must provide id to edit {$model->config->name}');\n";
+                    $body .= "\t\$this->redirect(\$this->request->referer());\n";
+                    $body .= "}\n\n";
 					$body .= "return compact('{$single}', 'errors');";
 					$method->setBody($body);
 					break;
 				case 'view' :
 					$body = "if (\$this->request->id) {\n";
-					$body .= "\t\${$single} = {$model->config->name}::get(\$this->request->id);\n";
+					$body .= "\t\${$single} = Model\{$model->config->name}::get(\$this->request->id);\n";
 					$body .= "}\n\n";
 					$body .= "return compact('{$single}');";
 					$method->setBody($body);
 					break;
 				case 'delete' :
 					$body = "if (\$this->request->id) {\n";
-					$body .= "\t\${$single} = {$model->config->name}::get(\$this->request->id);\n";
+					$body .= "\t\${$single} = Model\{$model->config->name}::get(\$this->request->id);\n";
 					$body .= "\t\${$single}->delete();\n";
 					$body .= "\t\$this->_message('Success to delete {$model->config->name}');\n";
 					$body .= "\t\$this->redirect('{$model->config->name}s::index');\n";
@@ -117,7 +126,11 @@ class Controller extends Generator {
 		return $class;
 	}
 
-	public function createView($filename) {
-
+	public function createView($action, $modelName) {
+        $content = file_get_contents(__DIR__ . "/templates/{$action}.html.twig");
+        $modelName = Inflector::camelize($modelName);
+        $content = str_replace("SINGLE", $modelName, $content);
+        $content = str_replace("PLURAL", Inflector::pluralize($modelName), $content);
+        return $content;
 	}
 }
