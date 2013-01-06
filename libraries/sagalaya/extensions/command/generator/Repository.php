@@ -11,6 +11,7 @@ class Repository extends Generator {
 		$class = new ClassGenerator($model->config->name. 'Repository');
 		$class->setExtendedClass('\Doctrine\ORM\EntityRepository');
 		$class->setNamespaceName($this->namespace);
+        $class->addUse($this->app . '\\models as Model');
 
 		return $class;
 	}

@@ -73,10 +73,8 @@ class Model extends Generator {
 			$property = new PropertyGenerator("{$field->name}", $default, PropertyGenerator::FLAG_PROTECTED);
 
 			if ($field->name == "password") {
-				$setPassword = new MethodGenerator('setPassword');
-				$setPassword->setParameter("password");
-				$setPassword->setBody("\$this->password = \\lithium\\util\\String::hash(\$password);");
-				$class->addMethodFromGenerator($setPassword);
+                $beforePersist = $class->getMethod('beforePersist');
+                $beforePersist->setBody("\$this->password = \\lithium\\util\\String::hash(\$this->password);\n\$this->created = new \DateTime();");
 			}
 
 			switch ($type) {
@@ -141,10 +139,10 @@ class Model extends Generator {
 					break;
 				default :
 					if ("{$type}" == "datetime") {
-						$setter = new MethodGenerator("set" . ucfirst("{$field->name}"));
-						$setter->setParameter("date");
-						$setter->setBody("\$this->{$field->name} = new \DateTime(\$date);");
-						$class->addMethodFromGenerator($setter);
+                        $setter = new MethodGenerator("set" . ucfirst("{$field->name}"));
+                        $setter->setParameter("date");
+                        $setter->setBody("\$this->{$field->name} = (is_a(\$date, 'DateTime')) ? \$date : new \DateTime(\$date);");
+                        $class->addMethodFromGenerator($setter);
 					}
 					$docblock = "@Column(type=\"{$type}\"{$attributes})";
 			}
