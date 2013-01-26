@@ -64,7 +64,8 @@ abstract class Model {
 	/**
 	 * getter function
 	 * @param string $field
-	 */
+     * @return null|$field
+     */
 	public function __get($field) {
 		if (isset($this->$field)) {
 			return $this->$field;
@@ -74,9 +75,10 @@ abstract class Model {
 	}
 
 	/**
-	 * setter function
+	 * Setter function
 	 * @param string $field
 	 * @param mixed $value
+     * @return \sagalaya\extensions\data\Model
 	 */
 	public function __set($field, $value) {
 		if ($field == "properties") {
@@ -216,7 +218,7 @@ abstract class Model {
 
 	/**
 	 * get model repository
-	 * @return type
+	 * @return object
 	 */
 	public static function getRepository() {
 		return self::getEntity()->getRepository(get_called_class());
@@ -234,7 +236,7 @@ abstract class Model {
 	/**
 	 * Processing supplying custom query made
 	 * @param array $options
-	 * @return list of object
+	 * @return array object
 	 */
 	public static function processQuery($options = array()) {
 
