@@ -115,7 +115,7 @@ abstract class Model {
 	}
 
 	/**
-	 * function to return the classname of called class
+	 * function to return the className of called class
 	 * @param boolean $short
 	 * @return string
 	 */
@@ -181,8 +181,8 @@ abstract class Model {
 
 	/**
 	 * Return query result in array, where the key as object id, and the value of specific field
-	 * @param string $field
-	 * @param string $order
+	 * @param string|array $field
+	 * @param array $conditions
 	 * @return array query result
 	 */
 	public static function getCompactList($field, $conditions = array()) {
@@ -232,7 +232,7 @@ abstract class Model {
 	}
 
 	/**
-	 * Processing supllying custom query made
+	 * Processing supplying custom query made
 	 * @param array $options
 	 * @return list of object
 	 */
@@ -411,7 +411,7 @@ abstract class Model {
 	}
 
     /**
-     * @param Filter $filter
+     * @param array $condition
      */
     public function addCondition($condition) {
         $this->_conditions = $this->_conditions + $condition;
