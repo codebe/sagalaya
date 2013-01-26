@@ -88,10 +88,4 @@ Connections::add('default', array(
     )
 ));
 
-Connections::add('test', array(
-    'type' => 'Doctrine',
-    'driver' => 'pdo_sqlite',
-    'path' => LITHIUM_LIBRARY_PATH . '/sagalaya/tests/db',
-    'encoding' => 'UTF-8'
-));
 ?>
