@@ -37,6 +37,13 @@ class MockUser extends Model
      * @OneToOne(targetEntity="MockProfile", cascade={"all"})
      */
     protected $profile;
+
+    protected $validations = array(
+        'email' => array(
+            array('notEmpty', 'message' => 'Email can\'t be empty'),
+            array('unique', 'message' => 'Email has been used, try another!')
+        )
+    );
 }
 
 ?>

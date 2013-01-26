@@ -252,10 +252,10 @@
 							
 							<pre class="brush: php">
 								protected $validations = array(
-									'fullname' => array(
+									'fullName' => array(
 										array('notEmpty', 'message' => 'Fullname can\'t be empty'),
-										array('custom', 'message' => 'message' => 'Fullname can\'t be George Bush', 
-												'function' => 'return strcasecmp($object->fullname, "George Bush") != 0;')
+										array('custom', 'message' => 'Fullname can\'t be George Bush',
+												'function' => 'return strcasecmp($object->fullName, "George Bush") != 0;')
 									),
 									'email' => array(
 										array('notEmpty', 'message' => 'Email can\'t be empty'),

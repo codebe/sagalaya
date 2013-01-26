@@ -10,11 +10,7 @@ class MockModel extends Model
 
     public function save()
     {
-        if (ModelValidator::isValid($this)) {
-            return true;
-        } else {
-            return false;
-        }
+        return ModelValidator::isValid($this);
     }
 
 }

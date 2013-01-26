@@ -82,22 +82,16 @@ Connections::add('default', array(
     ),
     'test' => array(
         'type' => 'Doctrine',
-        'driver' => 'pdo_mysql',
-        'host' => 'localhost',
-        'login' => 'root',
-        'password' => '',
-        'database' => 'sagalaya_test',
+        'driver' => 'pdo_sqlite',
+        'path' => LITHIUM_LIBRARY_PATH . '/sagalaya/tests/db',
         'encoding' => 'UTF-8'
     )
 ));
 
 Connections::add('test', array(
     'type' => 'Doctrine',
-    'driver' => 'pdo_mysql',
-    'host' => 'localhost',
-    'login' => 'root',
-    'password' => '',
-    'database' => 'sagalaya_test',
+    'driver' => 'pdo_sqlite',
+    'path' => LITHIUM_LIBRARY_PATH . '/sagalaya/tests/db',
     'encoding' => 'UTF-8'
 ));
 ?>

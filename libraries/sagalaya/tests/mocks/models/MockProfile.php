@@ -17,5 +17,13 @@ class MockProfile extends \sagalaya\extensions\data\Model
     /**
      * @Column(type="string")
      */
-    protected $fullname;
+    protected $fullName;
+
+    protected $validations = array(
+        'fullName' => array(
+            array('notEmpty', 'message' => 'Fullname can\'t be empty'),
+            array('custom', 'message' => 'Fullname can\'t be George Bush',
+            'function' => 'return strcasecmp($object->fullName, "Anonymous") != 0;')
+        )
+    );
 }

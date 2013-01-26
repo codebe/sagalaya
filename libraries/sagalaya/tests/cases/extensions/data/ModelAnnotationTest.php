@@ -2,14 +2,17 @@
 namespace sagalaya\tests\cases\extensions\data;
 
 use lithium\test\Unit;
-use sagalaya\tests\mocks\models\MockUser;
+use sagalaya\tests\mocks\models as Model;
 
 class ModelAnnotationTest extends Unit
 {
     public function testInstance()
     {
-        $group = new \sagalaya\tests\mocks\models\MockGroup(array('name' => 'Mock'));
-        $mock = new MockUser(
+        $group = new Model\MockGroup(
+            array('name' => 'Mock')
+        );
+
+        $mock = new Model\MockUser(
             array(
                 'username' => 'someone',
                 'email' => 'some@email.com',
@@ -17,7 +20,7 @@ class ModelAnnotationTest extends Unit
                 'group' => $group
             )
         );
-        $mock->save();
+
         $this->assertEqual($mock->email, 'some@email.com');
         $mock->delete();
     }
