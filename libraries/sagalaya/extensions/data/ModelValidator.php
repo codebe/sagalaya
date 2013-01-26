@@ -14,20 +14,22 @@ class ModelValidator {
 	public static $_errors;
 
 	/**
-	 *
+	 * Check if model is in valid state
 	 * @param Model $object
 	 * @param array $object_hash
-	 */
+     * @return bool
+     */
 	public static function isValid($object, $object_hash = array()) {
 		$errors = ModelValidator::validate($object, $object_hash);
 		return empty($errors);
 	}
 
 	/**
-	 *
+	 * Validate model state, generate errors value if any
 	 * @param Model $object
 	 * @param array $object_hash
-	 */
+     * @return array|null
+     */
 	public static function validate($object, $object_hash = array()) {
 
 		$errors = null;
@@ -35,7 +37,7 @@ class ModelValidator {
 			$object_hash[] = spl_object_hash($object);
 		}
 		$reflection = new \ReflectionClass($object);
-		$classname = $reflection->getName();
+		$className = $reflection->getName();
 		$validations = $object->validations;
 
         if (!empty($object->_conditions)) {
@@ -82,9 +84,9 @@ class ModelValidator {
             $object_array = static::convertToArray($object, $object->_variables);
 			$errors = Validator::check($object_array, $validations);
 
-			/** Unique checking */
-			foreach ($unique as $key => $value) {
-				$result = $classname::findOneBy(array($value[0] => $object->$value[0]));
+			// Unique checking
+			foreach ($unique as $value) {
+				$result = $className::findOneBy(array($value[0] => $object->$value[0]));
 				if (!empty($result)) {
 
 					// same unique value but different id
@@ -99,7 +101,7 @@ class ModelValidator {
 				}
 			}
 
-			/** EqualWith checking */
+			// Equal with checking
 			foreach ($equalWith as $key => $value) {
 
                 $field = $object_array[reset($value)];
@@ -111,7 +113,7 @@ class ModelValidator {
 
 			}
 
-			/** Custom validations */
+			// Custom validation
 			foreach ($custom as $key => $value) {
 				$rule = create_function('$object', $value['function']);
 				if ($rule($object, $object->$value[0]) === false) {
@@ -126,18 +128,18 @@ class ModelValidator {
 					$property->setAccessible(true);
                     if (ModelAnnotation::match($property, array('ManyToMany', 'OneToMany'))) {
                         $relation = $property->getValue($object);
-                        foreach ($relation as $item) {
-                            if (!in_array(spl_object_hash($item), $object_hash)) {
-                                if (!ModelValidator::isValid($item, $object_hash)) {
-                                    $errors[$property->getName()] = $item->getErrors();
+                        foreach ($relation as $model) {
+                            if (!in_array(spl_object_hash($model), $object_hash)) {
+                                if (!ModelValidator::isValid($model, $object_hash)) {
+                                    $errors[$property->getName()] = $model->getErrors();
                                 }
                             }
                         }
                     } elseif(ModelAnnotation::match($property, array('ManyToOne', 'OneToOne'))) {
-                        if ($item = $property->getValue($object)) {
-                            if (!in_array(spl_object_hash($item), $object_hash)) {
-                                if (!ModelValidator::isValid($item, $object_hash)) {
-                                    $errors[$property->getName()] = $item->getErrors();
+                        if ($model = $property->getValue($object)) {
+                            if (!in_array(spl_object_hash($model), $object_hash)) {
+                                if (!ModelValidator::isValid($model, $object_hash)) {
+                                    $errors[$property->getName()] = $model->getErrors();
                                 }
                             }
                         }
@@ -160,10 +162,12 @@ class ModelValidator {
 		return ModelValidator::$_errors[spl_object_hash($object)];
 	}
 
-	/**
-	 *  Convert doctrine object to array
-	 * @param Model $object
-	 */
+    /**
+     * Convert doctrine object to array
+     * @param Model $object
+     * @param array $addition
+     * @return array
+     */
 	public static function convertToArray($object, $addition = array()) {
 
         $result = $addition;
