@@ -15,7 +15,7 @@ class ModelBuilder
     public static $properties, $class, $namespace;
 
     /**
-     *
+     * Initialize class information
      * @param \sagalaya\extensions\data\Model $object
      */
     public static function init($object)
@@ -73,10 +73,12 @@ class ModelBuilder
 
                 $comment = ModelAnnotation::get($object, $field);
 
-                if (preg_match('|ManyToMany|', $comment) || preg_match('|OneToMany|', $comment)) {
+                if (preg_match('|ManyToMany|', $comment) ||
+                        preg_match('|OneToMany|', $comment)) {
                     $object->$field->clear();
                     static::add($object, $field, $value);
-                } else if (preg_match('|ManyToOne|', $comment) || preg_match('|OneToOne|', $comment)) {
+                } else if (preg_match('|ManyToOne|', $comment) ||
+                        preg_match('|OneToOne|', $comment)) {
                     static::set($object, $field, $value);
                 } else {
                     $object->$field = $value;
@@ -142,14 +144,14 @@ class ModelBuilder
      * Add element to model attribute
      * @param \sagalaya\extensions\data\Model $object
      * @param string $field
-     * @param mixed $value
+     * @param mixed $data
      */
-    public static function add($object, $field, $value)
+    public static function add($object, $field, $data)
     {
 
         $targetEntity = static::$namespace . '\\' . ModelAnnotation::get($object, $field, 'targetEntity');
 
-        foreach ($value as $index => $item) {
+        foreach ($data as $item) {
             if (!empty($item)) {
                 if (is_array($item)) {
                     $instance = $targetEntity::findOneBy($item);

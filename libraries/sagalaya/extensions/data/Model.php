@@ -124,8 +124,8 @@ abstract class Model {
 	public static function _name($short = false) {
 		$className = get_called_class();
 		if ($short) {
-			$splitted = explode('\\', $className);
-			$className = end($splitted);
+			$splitter = explode('\\', $className);
+			$className = end($splitter);
 			$className = strtolower($className);
 		}
 		return $className;
@@ -148,10 +148,10 @@ abstract class Model {
 		return $className;
 	}
 
-	/**
-	 * Remove the object from database
-	 * @param integer $id
-	 */
+    /**
+     * Remove the object from database
+     * @internal param int $id
+     */
 	public function delete() {
 		if ($this && is_object($this)) {
 			self::getEntity()->remove($this);
@@ -210,7 +210,7 @@ abstract class Model {
 	/**
 	 * get EntityManager object
 	 * @param string $connection
-	 * @return object
+	 * @return \Doctrine\ORM\EntityManager
 	 */
 	public static function getEntity($connection = 'default') {
 		return Connections::get($connection)->getEntityManager();
@@ -236,7 +236,7 @@ abstract class Model {
 	/**
 	 * Processing supplying custom query made
 	 * @param array $options
-	 * @return array object
+	 * @return \Doctrine\ORM\QueryBuilder $qb
 	 */
 	public static function processQuery($options = array()) {
 
@@ -350,32 +350,34 @@ abstract class Model {
 		return $qb;
 	}
 
-	/**
-	 * findAll is intensive method that using of processQuery function
-	 *
-	 * example of using findAll function
-	 *
-	 * $users = User::findAll([
-	 * 	'select' => [
-	 * 		['field' => 'type'],
-	 * 		['field' => ['salary', 'others], 'aggregate' => 'SUM', 'operator' => '*', 'as' => 'income']
-	 * 		['field' => 'id', 'aggregate' => 'COUNT', 'as' => 'number']
-	 * 	],
-	 * 	'where' => [
-	 * 		'and' => [['fullname' => ['is' => 'NOT NULL']],
-	 * 			['city' => ['like' => '%Bandung%']]],
-	 * 		'or' => [['birthday' => ['lte' => '2012-10-10']]]
-	 * 	],
-	 * 	'leftJoin' => [['field' => 'group', 'where' => [ ['name' => ['eq' => 'administrator']] ] ]],
-	 * 	'orderBy' => ['fields' => ['age', 'fullname'], 'direction' => 'DESC'],
-	 * 	'offset' => 0, 'limit' => 10, 'groupBy' => 'group'
-	 * ], User::Model_Single_Scalar)
-	 *
-	 * Note : sample on PHP 5.4 provide [] as array
-	 *
-	 * @param array $options
-	 * @param string $type
-	 */
+    /**
+     * findAll is intensive method that using of processQuery function
+     *
+     * example of using findAll function
+     *
+     * $users = User::findAll([
+     *     'select' => [
+     *         ['field' => 'type'],
+     *         ['field' => ['salary', 'others], 'aggregate' => 'SUM', 'operator' => '*', 'as' => 'income']
+     *         ['field' => 'id', 'aggregate' => 'COUNT', 'as' => 'number']
+     *     ],
+     *     'where' => [
+     *         'and' => [['fullname' => ['is' => 'NOT NULL']],
+     *             ['city' => ['like' => '%Bandung%']]],
+     *         'or' => [['birthday' => ['lte' => '2012-10-10']]]
+     *     ],
+     *     'leftJoin' => [['field' => 'group', 'where' => [ ['name' => ['eq' => 'administrator']] ] ]],
+     *     'orderBy' => ['fields' => ['age', 'fullname'], 'direction' => 'DESC'],
+     *     'offset' => 0, 'limit' => 10, 'groupBy' => 'group'
+     * ], User::Model_Single_Scalar)
+     *
+     * Note : sample on PHP 5.4 provide [] as array
+     *
+     * @param array $options
+     * @param int|string $type
+     * @throws \Exception
+     * @return array
+     */
 	public static function findAll($options = array(), $type = Model::Model_Object) {
 
 		$qb = self::processQuery($options);
@@ -421,7 +423,7 @@ abstract class Model {
 
 	/**
 	 * Recursively process join query
-	 * @param QueryBuilder $qb
+	 * @param \Doctrine\ORM\QueryBuilder $qb
 	 * @param Array $options
 	 * @param String $className
 	 * @param object $and
@@ -453,16 +455,18 @@ abstract class Model {
 
 	/**
 	 * Add rule to conditions
-	 * @param QueryBuilder $qb
+	 * @param \Doctrine\ORM\QueryBuilder $qb
 	 * @param array $rule
 	 * @param string $alias
-	 */
-	private static function addRule($qb, $rule, $alias = null) {
+     * @return \Doctrine\ORM\Query\Expr\Comparison|\Doctrine\ORM\Query\Expr\Func|string
+     */
+	private static function addRule(\Doctrine\ORM\QueryBuilder $qb, $rule, $alias = null) {
 
+        $field = null; $condition = null; $match = null;
 		foreach ($rule as $key => $value) {
 			$field = $key;
-			foreach ($value as $_cond => $_match) {
-				$condition = $_cond;
+			foreach ($value as $_condition => $_match) {
+				$condition = $_condition;
 				$match = $_match;
 			}
 		}

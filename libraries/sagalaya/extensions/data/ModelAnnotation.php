@@ -12,7 +12,7 @@ class ModelAnnotation {
 	private static $cached, $filename;
 
 	/**
-	 *
+	 *  Initialize or update annotation cache
 	 */
 	public static function init() {
 
@@ -28,11 +28,12 @@ class ModelAnnotation {
 	}
 
 	/**
-	 *
-	 * @param unknown_type $class
-	 * @param unknown_type $field
-	 * @param unknown_type $arg
-	 */
+	 * Get the value of specified docType field
+	 * @param string|object $class
+	 * @param string $field
+	 * @param array $arg
+     * @return string
+     */
 	public static function get($class, $field, $arg = null) {
 
 		static::init();
@@ -61,10 +62,11 @@ class ModelAnnotation {
 	}
 
 	/**
-	 *
+	 * Check if the docType has specified string or not
 	 * @param \ReflectionProperty $property
-	 * @param unknown_type $matches
-	 */
+	 * @param array $matches
+     * @return bool
+     */
 	public static function match(\ReflectionProperty $property, $matches = array()) {
 		$comment = static::get($property->getDeclaringClass()->getName(), $property->getName());
 		foreach ($matches as $match) {
